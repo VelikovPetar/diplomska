@@ -1,0 +1,2 @@
+# diplomska
+Graduation thesis project.
