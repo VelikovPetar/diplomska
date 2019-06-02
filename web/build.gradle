@@ -1,0 +1,4 @@
+group 'com.velikovp.diplomska.web'
+version '1.0-SNAPSHOT'
+
+apply from: '../build-scripts/build-jar.gradle'

@@ -1,0 +1,4 @@
+group 'com.velikovp.diplomska.auth'
+version '1.0-SNAPSHOT'
+
+apply from: '../build-scripts/build-jar.gradle'
