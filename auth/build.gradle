@@ -1,4 +1,6 @@
 group 'com.velikovp.diplomska.auth'
 version '1.0-SNAPSHOT'
 
+apply from: '../build-scripts/kotlin-setup.gradle'
+apply from: '../build-scripts/spring-boot-setup.gradle'
 apply from: '../build-scripts/build-jar.gradle'
