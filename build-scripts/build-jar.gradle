@@ -1,7 +1,7 @@
 task buildJar() {
-    dependsOn 'clean'
-    dependsOn 'build'
-    dependsOn 'bootJar'
-    tasks.findByName('build').mustRunAfter('clean')
-    tasks.findByName('bootJar').mustRunAfter('build')
+  dependsOn 'clean'
+  dependsOn 'build'
+  dependsOn 'bootJar'
+  tasks.findByName('build').mustRunAfter('clean')
+  tasks.findByName('bootJar').mustRunAfter('build')
 }

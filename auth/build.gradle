@@ -4,3 +4,21 @@ version '1.0-SNAPSHOT'
 apply from: '../build-scripts/kotlin-setup.gradle'
 apply from: '../build-scripts/spring-boot-setup.gradle'
 apply from: '../build-scripts/build-jar.gradle'
+apply plugin: 'kotlin-jpa'
+
+buildscript {
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlin_version"
+  }
+}
+
+dependencies {
+  // Security
+  implementation 'org.springframework.boot:spring-boot-starter-security'
+  // Database
+  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+  implementation 'mysql:mysql-connector-java'
+}

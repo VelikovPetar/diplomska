@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class MainController {
 
-    @RequestMapping("/home", method = [RequestMethod.GET])
-    fun index(): String {
-        return "Welcome to the main page!"
-    }
+  @RequestMapping("/home", method = [RequestMethod.GET])
+  fun index(): String {
+    return "Welcome to the main page!"
+  }
 }
