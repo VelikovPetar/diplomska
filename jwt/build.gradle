@@ -1,0 +1,10 @@
+group 'com.velikovp.diplomska.jwt'
+version '1.0-SNAPSHOT'
+
+apply from: '../build-scripts/kotlin-setup.gradle'
+
+dependencies {
+  // JWT
+  implementation "io.jsonwebtoken:jjwt:$jwt_version"
+  implementation "junit:junit:$junit_version"
+}
