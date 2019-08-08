@@ -1,2 +1,4 @@
 Manifest-Version: 1.0
+Start-Class: com.velikovp.diplomska.auth.AuthApplicationKt
+Main-Class: org.springframework.boot.loader.WarLauncher
 
