@@ -1,0 +1,25 @@
+task deploy() {
+  dependsOn 'buildJar'
+  String port = project.property("port")
+  doLast {
+    String imageName = "$project.name-ms"
+    println("Building Docker image: $imageName")
+    buildDockerImage(imageName)
+    println("Running Docker image: $imageName on port: $port")
+    runDockerContainer(imageName, port)
+  }
+}
+
+def buildDockerImage(imageName) {
+  exec {
+    executable("docker")
+    args("build", "--tag=$imageName", "$project.projectDir/")
+  }
+}
+
+def runDockerContainer(imageName, port) {
+  exec {
+    executable("docker")
+    args("run", "-d", "-p", "$port:8080", imageName)
+  }
+}
