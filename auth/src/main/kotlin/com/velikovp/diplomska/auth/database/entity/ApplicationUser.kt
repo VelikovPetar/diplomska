@@ -1,4 +1,4 @@
-package com.velikovp.diplomska.auth.model
+package com.velikovp.diplomska.auth.database.entity
 
 import javax.persistence.Entity
 

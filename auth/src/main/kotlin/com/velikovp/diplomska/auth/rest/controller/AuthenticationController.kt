@@ -1,7 +1,7 @@
 package com.velikovp.diplomska.auth.rest.controller
 
-import com.velikovp.diplomska.auth.model.ApplicationUser
-import com.velikovp.diplomska.auth.repository.ApplicationUserRepository
+import com.velikovp.diplomska.auth.database.entity.ApplicationUser
+import com.velikovp.diplomska.auth.database.repository.ApplicationUserRepository
 import com.velikovp.diplomska.auth.rest.model.request.LoginRequestModel
 import com.velikovp.diplomska.auth.rest.model.request.RegisterUserRequestModel
 import com.velikovp.diplomska.auth.rest.model.response.ResponseCode

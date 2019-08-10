@@ -1,6 +1,6 @@
-package com.velikovp.diplomska.auth.repository
+package com.velikovp.diplomska.auth.database.repository
 
-import com.velikovp.diplomska.auth.model.ApplicationUser
+import com.velikovp.diplomska.auth.database.entity.ApplicationUser
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
