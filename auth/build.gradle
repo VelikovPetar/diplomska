@@ -22,4 +22,6 @@ dependencies {
   // Database
   implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
   implementation 'mysql:mysql-connector-java'
+  // JWT
+  implementation project(':jwt')
 }

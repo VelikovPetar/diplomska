@@ -17,4 +17,13 @@ interface ApplicationUserRepository : JpaRepository<ApplicationUser, Long> {
    */
   @Query("select u from ApplicationUser u where u.email = :email")
   fun findByEmail(@Param("email") email: String): ApplicationUser?
+
+  /**
+   * Finds the user identified by the given mail and password.
+   *
+   * @param email, the email to search the user by.
+   * @param password, the password to search the suer by.
+   */
+  @Query("select u from ApplicationUser u where u.email = :email and u.password = :password")
+  fun findByEmailAndPassword(@Param("email") email: String, @Param("password") password:String): ApplicationUser?
 }

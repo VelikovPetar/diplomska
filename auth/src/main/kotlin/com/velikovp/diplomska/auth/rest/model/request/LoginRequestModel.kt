@@ -3,31 +3,21 @@ package com.velikovp.diplomska.auth.rest.model.request
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.hibernate.validator.constraints.Length
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 
 /**
- * Model representing the required request body for the registerUser call.
+ * Model representing the required request body for the login call.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class RegisterUserRequestModel(
+class LoginRequestModel(
   @field:Email(message = "Email must be a well-formed address.")
   @field:NotBlank(message = "Email cannot be empty.")
   @field:JsonProperty("email")
   val email: String?,
 
-  @field:NotBlank(message = "Name cannot be empty.")
-  @field:JsonProperty("name")
-  val name: String?,
-
-  @field:NotBlank(message = "Surname cannot be empty.")
-  @field:JsonProperty("surname")
-  val surname: String?,
-
   @field:NotBlank(message = "Password cannot be empty.")
-  @field:Length(min = 8, max = 23, message = "Password must be between 8 and 23 characters long.")
   @field:JsonProperty("password")
   val password: String?
 )
