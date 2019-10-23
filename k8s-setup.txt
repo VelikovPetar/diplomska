@@ -1,0 +1,12 @@
+Preconditions:
+1. Install kubectl (https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-linux)
+2. Install KVM (https://tutorialforlinux.com/2018/08/25/linux-mint-19-kvm-installation-guide/)
+3. Install KVM2 driver (https://computingforgeeks.com/how-to-run-minikube-on-kvm/)
+4. Install Minikube (https://kubernetes.io/docs/setup/learning-environment/minikube/)
+
+1. Start a local Minikube cluster with kvm virtual machine driver:
+    - minikube start --vm-driver=kvm2
+
+2. Create the 'deployment.yaml' file describing the application (deployment).
+3. Run the command to create a deployment from the .yaml file.
+    - kubectl apply -f ./deployment.yaml
