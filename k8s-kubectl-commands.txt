@@ -1,0 +1,20 @@
+1. List all pods in all namespaces
+    - kubectl get pods
+2. Get detailed information about a pod:
+    - kubectl describe pod <pod-name>
+3. Expose a port of a given deployment, pod or other resource
+    - kubectl expose <type> <identifier/name> [--port=<external-port>] [--target-port=<container-port>] [--type=<service-type>]
+4. Attach to a running container to view its output
+    - kubectl attach <pod-name> [-c <container>]
+5. Execute a command in a container
+    - kubectl exec -it <pod-name> [-c <container>] <command> [args...]
+6. Run an image into a cluster
+    - kubectl run <name> --image=<image>
+7. Scale a deployment to multiple replicas
+    - kubectl scale --replicas=<number-of-replicas> deployment/<deployment-name>
+8. Get rollout status of a deployment
+    - kubectl rollout status deployment <deployment-name>
+9. Update image of a deployment
+    - kubectl set image deployments/<deployment-name> <image>=<new-image>
+10. Label a resource
+    - kubectl label <resource-type> <resource-name> <key>=<value>

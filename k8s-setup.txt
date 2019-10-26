@@ -4,7 +4,7 @@ Preconditions:
 3. Install KVM2 driver (https://computingforgeeks.com/how-to-run-minikube-on-kvm/)
 4. Install Minikube (https://kubernetes.io/docs/setup/learning-environment/minikube/)
 
-1. Start a local Minikube cluster with kvm virtual machine driver:
+1. Start a local Minikube cluster running in a KVM virtual machine:
     - minikube start --vm-driver=kvm2
 
 2. Create the 'deployment.yaml' file describing the application (deployment).
