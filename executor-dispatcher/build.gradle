@@ -5,4 +5,39 @@ apply from: '../build-scripts/kotlin-setup.gradle'
 apply from: '../build-scripts/spring-boot-setup.gradle'
 apply from: '../build-scripts/build-jar.gradle'
 apply from: '../build-scripts/deploy.gradle'
-apply from: '../build-scripts/generate-app-properties.gradle'
+
+dependencies {
+    // JWT
+    implementation project(':jwt')
+}
+
+task generateAppProperties() {
+    def dir = "$projectDir/build/resources/main"
+    def fileName = "application.properties"
+    doLast {
+        def resDir = file(dir)
+        if (!resDir.exists()) {
+            println("Creating $dir directory...")
+            file(dir).mkdirs()
+        }
+        def jwtSecret = userInput("Enter the jwtSecret: ")
+        if (jwtSecret.isEmpty()) {
+            throw new RuntimeException("The JWT secret cannot be null.")
+        }
+        def text = "jwt.token.secret=$jwtSecret"
+        println("Generating application.properties...")
+        def propertiesFile = file("$dir/$fileName")
+        if (propertiesFile.exists()) {
+            propertiesFile.delete()
+        }
+        propertiesFile << text
+    }
+}
+
+static def userInput(String promptLine) {
+    println(promptLine)
+    def reader = System.in.newReader()
+    return reader.readLine()
+}
+
+build.dependsOn generateAppProperties
