@@ -1,0 +1,8 @@
+group 'com.velikovp.diplomska.dispatcher'
+version '1.0-SNAPSHOT'
+
+apply from: '../build-scripts/kotlin-setup.gradle'
+apply from: '../build-scripts/spring-boot-setup.gradle'
+apply from: '../build-scripts/build-jar.gradle'
+apply from: '../build-scripts/deploy.gradle'
+apply from: '../build-scripts/generate-app-properties.gradle'
