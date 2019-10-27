@@ -7,6 +7,8 @@ import com.velikovp.diplomska.auth.rest.model.request.RegisterUserRequestModel
 import com.velikovp.diplomska.auth.rest.model.response.ResponseCode
 import com.velikovp.diplomska.auth.rest.model.response.ResponseModel
 import com.velikovp.diplomska.jwt.JwtTokenCreator
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -27,6 +29,8 @@ class AuthenticationController(val applicationUserRepository: ApplicationUserRep
 
   @Value("\${jwt.token.secret}")
   lateinit var secretKey: String
+
+  private val logger: Logger = LoggerFactory.getLogger(AuthenticationController::class.java)
 
   /**
    * Endpoint for user registration.
