@@ -4,40 +4,25 @@ version '1.0-SNAPSHOT'
 apply from: '../build-scripts/kotlin-setup.gradle'
 apply from: '../build-scripts/spring-boot-setup.gradle'
 apply from: '../build-scripts/build-jar.gradle'
+apply from: '../build-scripts/generate-app-properties.gradle'
 apply from: '../build-scripts/deploy.gradle'
+apply plugin: 'kotlin-jpa'
 
-dependencies {
-    // JWT
-    implementation project(':jwt')
-}
-
-task generateAppProperties() {
-    def dir = "$projectDir/build/resources/main"
-    def fileName = "application.properties"
-    doLast {
-        def resDir = file(dir)
-        if (!resDir.exists()) {
-            println("Creating $dir directory...")
-            file(dir).mkdirs()
-        }
-        def jwtSecret = userInput("Enter the jwtSecret: ")
-        if (jwtSecret.isEmpty()) {
-            throw new RuntimeException("The JWT secret cannot be null.")
-        }
-        def text = "jwt.token.secret=$jwtSecret"
-        println("Generating application.properties...")
-        def propertiesFile = file("$dir/$fileName")
-        if (propertiesFile.exists()) {
-            propertiesFile.delete()
-        }
-        propertiesFile << text
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlin_version"
     }
 }
 
-static def userInput(String promptLine) {
-    println(promptLine)
-    def reader = System.in.newReader()
-    return reader.readLine()
+dependencies {
+    // File upload
+    implementation "org.springframework:spring-web:5.1.2.RELEASE"
+    // Database
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'mysql:mysql-connector-java'
+    // JWT
+    implementation project(':jwt')
 }
-
-build.dependsOn generateAppProperties

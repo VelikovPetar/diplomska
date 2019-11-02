@@ -1,5 +1,6 @@
 package com.velikovp.diplomska.dispatcher
 
+import com.velikovp.diplomska.jwt.JwtTokenParser
 import com.velikovp.diplomska.jwt.JwtTokenValidator
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -15,6 +16,14 @@ class DispatcherApplication {
      */
     @Bean
     fun jwtTokenValidator() = JwtTokenValidator()
+
+    /**
+     * Provides the default Jwt token parser.
+     *
+     * @return the default Jwt token parser.
+     */
+    @Bean
+    fun jwtTokenParser() = JwtTokenParser()
 }
 
 fun main(args: Array<String>) {

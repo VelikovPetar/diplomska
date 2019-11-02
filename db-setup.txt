@@ -16,3 +16,15 @@
 
 *. Restart the container if it is stopped:
     >sudo docker start `sudo docker ps -a -q --filter "name=mysql1"`
+
+=== Issue with port 3306 being taken on linux. ===
+*. Find the process listening on a given port:
+    >sudo netstat -nlp | grep <port>
+
+*. Kill process:
+    >sudo kill <pid>
+
+=== Check databases/tables in MySql. ===
+>show databases;
+>use db_diplomska;
+>show tables;

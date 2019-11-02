@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
 /**
- * Repository handling the CRUD operations for the ApplicationUser model.
+ * Repository handling the CRUD operations for the [ApplicationUser] model.
  */
 interface ApplicationUserRepository : JpaRepository<ApplicationUser, Long> {
 

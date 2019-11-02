@@ -4,6 +4,7 @@ version '1.0-SNAPSHOT'
 apply from: '../build-scripts/kotlin-setup.gradle'
 apply from: '../build-scripts/spring-boot-setup.gradle'
 apply from: '../build-scripts/build-jar.gradle'
+apply from: '../build-scripts/generate-app-properties.gradle'
 apply from: '../build-scripts/deploy.gradle'
 apply plugin: 'kotlin-jpa'
 
@@ -25,55 +26,3 @@ dependencies {
   // JWT
   implementation project(':jwt')
 }
-
-task generateAppProperties() {
-  def dir = "$projectDir/build/resources/main"
-  def fileName = "application.properties"
-  def properties = [
-          "spring.datasource.platform" : "mysql",
-          "spring.datasource.url" : "jdbc:mysql://172.17.0.2:3306/db_diplomska",
-          "spring.datasource.username" : "diplomska-admin",
-          "spring.jpa.hibernate.ddl-auto" : "create-drop",
-          "spring.jpa.database-platform" : "org.hibernate.dialect.MySQL8Dialect"
-  ]
-  def dbPasswordKey = "spring.datasource.password"
-  def jwtSecretKey = "jwt.token.secret"
-  doLast {
-    // create directory if it doesn't exist
-    def resDir = file(dir)
-    if (!resDir.exists()) {
-      println("Creating $dir directory...")
-      resDir.mkdirs()
-    }
-    // prompt the user for dynamic property values
-    def dbPasswordValue = userInput("Enter the database password:")
-    def jwtSecretValue = userInput("Enter the jwtSecret:")
-    if (dbPasswordValue.isEmpty()) {
-      throw new RuntimeException("The database password cannot be empty.")
-    }
-    if (jwtSecretValue.isEmpty()) {
-      throw new RuntimeException("The JWT secret cannot be empty.")
-    }
-    properties[dbPasswordKey] = dbPasswordValue
-    properties[jwtSecretKey] = jwtSecretValue
-    // generate the application.properties file
-    println("Generating application.properties...")
-    def propertiesFile = file("$dir/$fileName")
-    if (propertiesFile.exists()) {
-      propertiesFile.delete()
-    }
-    def text = ""
-    properties.forEach { key, value ->
-      text += "$key=$value\n"
-    }
-    propertiesFile << text
-  }
-}
-
-static def userInput(String promptLine) {
-  println(promptLine)
-  def reader = System.in.newReader()
-  return reader.readLine()
-}
-
-build.dependsOn generateAppProperties
