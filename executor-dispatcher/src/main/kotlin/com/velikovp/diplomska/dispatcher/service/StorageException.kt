@@ -4,7 +4,7 @@ import java.io.IOException
 import java.lang.Exception
 
 /**
- * Exception thrown in case of a failure in the [SolutionFileStorageService].
+ * Exception thrown in case of a failure in the service layer.
  *
  * @param message, the message to propagate.
  * @param exception, the exception to propagate.
