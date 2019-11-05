@@ -1,4 +1,4 @@
-package com.velikovp.diplomska.auth.rest.exception
+package com.velikovp.diplomska.auth.rest.error
 
 import com.velikovp.diplomska.auth.rest.model.response.ResponseCode
 import com.velikovp.diplomska.auth.rest.model.response.ResponseModel
@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 
+/**
+ * Handles the errors in the JSON request models.
+ */
 @ControllerAdvice
 class AuthenticationExceptionHandler : ResponseEntityExceptionHandler() {
 
