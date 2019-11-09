@@ -1,7 +1,10 @@
 package com.velikovp.diplomska.dispatcher
 
+import com.velikovp.diplomska.executor.Executor
+import com.velikovp.diplomska.executor.PythonExecutor
 import com.velikovp.diplomska.jwt.JwtTokenParser
 import com.velikovp.diplomska.jwt.JwtTokenValidator
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
@@ -11,19 +14,22 @@ class DispatcherApplication {
 
     /**
      * Provides the default Jwt token validator.
-     *
-     * @return the default Jwt token validator.
      */
     @Bean
     fun jwtTokenValidator() = JwtTokenValidator()
 
     /**
      * Provides the default Jwt token parser.
-     *
-     * @return the default Jwt token parser.
      */
     @Bean
     fun jwtTokenParser() = JwtTokenParser()
+
+    /**
+     * Provides the [PythonExecutor].
+     */
+    @Bean
+    @Qualifier("pythonExecutor")
+    fun pythonExecutor(): Executor = PythonExecutor()
 }
 
 fun main(args: Array<String>) {

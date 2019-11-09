@@ -1,2 +1,3 @@
 rootProject.name = 'diplomska'
-include 'auth', 'web', 'jwt', 'executor-dispatcher'
+include 'auth', 'web', 'jwt', 'executor-dispatcher', 'executor'
+

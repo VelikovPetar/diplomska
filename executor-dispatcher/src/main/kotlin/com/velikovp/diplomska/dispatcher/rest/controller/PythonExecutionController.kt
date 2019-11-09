@@ -2,28 +2,37 @@ package com.velikovp.diplomska.dispatcher.rest.controller
 
 import com.velikovp.diplomska.dispatcher.rest.model.ResponseCode
 import com.velikovp.diplomska.dispatcher.rest.model.ResponseModel
-import com.velikovp.diplomska.dispatcher.service.SolutionFileStorageService
+import com.velikovp.diplomska.dispatcher.service.SolutionsService
 import com.velikovp.diplomska.dispatcher.service.StorageException
+import com.velikovp.diplomska.dispatcher.service.utils.FileUtils
+import com.velikovp.diplomska.executor.Executor
+import com.velikovp.diplomska.executor.model.ExecutionResult
 import com.velikovp.diplomska.jwt.JwtTokenParser
 import com.velikovp.diplomska.jwt.JwtTokenValidator
 import com.velikovp.diplomska.jwt.JwtValidationResult
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
+import org.springframework.util.StringUtils
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.nio.file.Paths
 import java.util.*
 
 /**
  * Controller handling the requests for execution of python code.
  */
 @RestController
-class PythonExecutionController(val solutionFileStorageService: SolutionFileStorageService,
+class PythonExecutionController(val solutionsService: SolutionsService,
+                                @Qualifier("pythonExecutor") private val executor: Executor,
                                 val jwtTokenValidator: JwtTokenValidator,
                                 val jwtTokenParser: JwtTokenParser) {
 
@@ -58,9 +67,12 @@ class PythonExecutionController(val solutionFileStorageService: SolutionFileStor
     val userId = extractUserIdFromJwtToken(jwtToken)
     userId ?: return ResponseEntity.badRequest().body(ResponseModel(ResponseCode.UNKNOWN_ERROR, "An error has occurred during the operation."))
     return try {
-      solutionFileStorageService.storeFile(file, "python", 1, userId)
-      // TODO Perform code execution.
-      ResponseEntity.ok(ResponseModel())
+      val result = executor.executeSingleTestCase(FileUtils.readContentsFromMultipartFile(file), "3 4", "7")
+      when (result) {
+        is ExecutionResult.Success.OutputCorrect -> ResponseEntity.ok(ResponseModel())
+        is ExecutionResult.Success.OutputMismatch -> ResponseEntity.ok(ResponseModel(errorMessage = "Expected: ${result.expectedOutput}\nActual: ${result.output}"))
+        else -> ResponseEntity.badRequest().body(ResponseModel(ResponseCode.BAD_REQUEST, (result as ExecutionResult.Error).message))
+      }
     } catch (e: StorageException) {
       logger.debug("Failed to save solution to database.", e)
       ResponseEntity.badRequest().body(ResponseModel(ResponseCode.UNKNOWN_ERROR, "An error has occurred during the operation."))

@@ -25,4 +25,6 @@ dependencies {
     implementation 'mysql:mysql-connector-java'
     // JWT
     implementation project(':jwt')
+    // Executor
+    implementation project(":executor")
 }

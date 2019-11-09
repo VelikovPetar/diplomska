@@ -1,0 +1,4 @@
+group 'com.velikovp.diplomska.executor'
+version '1.0-SNAPSHOT'
+
+apply from: '../build-scripts/kotlin-setup.gradle'
