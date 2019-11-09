@@ -33,6 +33,7 @@ import java.util.*
 @RestController
 class PythonExecutionController(val solutionsService: SolutionsService,
                                 @Qualifier("pythonExecutor") private val executor: Executor,
+                                // TODO Remove the executor from here, and move the logic to [SolutionsService]
                                 val jwtTokenValidator: JwtTokenValidator,
                                 val jwtTokenParser: JwtTokenParser) {
 
