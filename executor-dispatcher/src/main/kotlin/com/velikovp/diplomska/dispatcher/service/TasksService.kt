@@ -20,14 +20,16 @@ class TasksService(private val tasksRepository: TasksRepository,
    * @param descriptionText, the description text for the task.
    * @param testCases, the list of test cases.
    */
-  fun createTask(descriptionText: String, testCases: List<TestCaseModel>) {
+  fun createTask(descriptionText: String, testCases: List<TestCaseModel>): Task {
     val task = Task(descriptionText)
     val taskId = tasksRepository.save(task).getId()
     testCasesRepository.saveAll(testCases.map {
       TestCase(task, it.input!!, it.expectedOutput!!)
     })
-    if (!tasksRepository.findById(taskId!!).isPresent) {
+    val savedTask = tasksRepository.findById(taskId!!)
+    if (!savedTask.isPresent) {
       throw StorageException("Task cannot be stored.")
     }
+    return savedTask.get()
   }
 }

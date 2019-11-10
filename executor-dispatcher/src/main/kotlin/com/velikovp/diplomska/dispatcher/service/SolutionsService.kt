@@ -2,24 +2,29 @@ package com.velikovp.diplomska.dispatcher.service
 
 import com.velikovp.diplomska.dispatcher.database.entity.Solution
 import com.velikovp.diplomska.dispatcher.database.entity.SolutionTestCase
-import com.velikovp.diplomska.dispatcher.database.entity.SolutionTestCaseKey
+import com.velikovp.diplomska.dispatcher.database.entity.Task
+import com.velikovp.diplomska.dispatcher.database.repository.SolutionTestCaseRepository
 import com.velikovp.diplomska.dispatcher.database.repository.SolutionsRepository
 import com.velikovp.diplomska.dispatcher.database.repository.TasksRepository
+import com.velikovp.diplomska.dispatcher.service.utils.FileUtils
 import com.velikovp.diplomska.executor.Executor
+import com.velikovp.diplomska.executor.model.ExecutionResult
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
-import org.springframework.util.StringUtils
 import org.springframework.web.multipart.MultipartFile
 
 /**
  * Service holding the logic for storing/retrieving [Solution]s from the storage(Database).
  */
 @Service
-class SolutionsService(@Qualifier("pythonExecutor") private val executor: Executor,
-                       private val solutionsRepository: SolutionsRepository,
-                       private val tasksRepository: TasksRepository) {
+class SolutionsService(
+  @Qualifier("pythonExecutor") private val executor: Executor,
+  private val solutionsRepository: SolutionsRepository,
+  private val tasksRepository: TasksRepository,
+  private val solutionTestCaseRepository: SolutionTestCaseRepository
+) {
 
   private val logger: Logger = LoggerFactory.getLogger(SolutionsService::class.java)
 
@@ -35,42 +40,47 @@ class SolutionsService(@Qualifier("pythonExecutor") private val executor: Execut
    * @throws [StorageException] if the storing of the solution fails.
    */
   fun storeSolution(file: MultipartFile, language: String, taskId: Long, submittedBy: Long): Solution {
-
-    // TODO IMPLEMENT CORRECTLY!
-    val filename = StringUtils.cleanPath(
-      file.originalFilename ?: throw StorageException("Cannot clean the name of the file to be stored.")
-    )
-    try {
-      if (filename.contains("..")) {
-        logger.debug("Filename $filename contains invalid path sequence.")
-        throw StorageException("Filename $filename contains invalid path sequence.")
-      }
-      val task = tasksRepository.findById(taskId).let {
-        if (it.isPresent) {
-          it.get()
-        } else {
-          throw StorageException("Cannot retrieve the task for this submission.")
-        }
-      }
-
-      val solution = Solution(
-        filename = filename,
-        fileContentType = file.contentType ?: throw StorageException("Cannot retrieve content-type of the file."),
-        language = language,
-        userId = submittedBy,
-        task = task,
-        content = file.bytes
-      )
-      val solutionId = solutionsRepository.save(solution).getId()
-      val savedSolution = solutionsRepository.getOne(solutionId!!)
-      savedSolution.solutionTestCases = task.testCases.map {
-        SolutionTestCase(SolutionTestCaseKey(solutionId, it.getId()!!), /*TODO execute code*/"dummyOutput", savedSolution, it)
-      }
-
-      return solutionsRepository.save(savedSolution)
+    val task = try {
+      tasksRepository.getOne(taskId)
     } catch (e: Exception) {
-      logger.debug("Storing of solution file failed. Cause: ${e.message}")
-      throw StorageException("Storing of solution file failed. Cause: ${e.message}", e)
+      logger.debug("Task with id: $taskId not found.")
+      null
+    }
+    task ?: throw StorageException("Task with id: $taskId not found.")
+    val solutionContent = FileUtils.readContentsFromMultipartFile(file)
+    val solution = Solution(
+      filename = file.originalFilename ?: "solution_for_task_$taskId.py",
+      fileContentType = file.contentType ?: "",
+      language = language,
+      userId = submittedBy,
+      task = task,
+      content = solutionContent
+    )
+    val savedSolution = solutionsRepository.save(solution)
+    savedSolution.solutionTestCases = evaluateSolutionAgainstTestCases(savedSolution, task).map {
+      solutionTestCaseRepository.save(it)
+    }
+    return try {
+      solutionsRepository.save(savedSolution)
+    } catch (e: Exception) {
+      logger.debug("Error saving task execution outputs.", e)
+      throw StorageException("Error saving task execution outputs.", e)
+    }
+  }
+
+  private fun evaluateSolutionAgainstTestCases(solution: Solution, task: Task): List<SolutionTestCase> {
+    return task.testCases.map { testCase ->
+      val executionResult = executor.executeSingleTestCase(solution.content, testCase.input, testCase.expectedOutput)
+      val successOutput = when (executionResult) {
+        is ExecutionResult.Success.OutputCorrect -> testCase.expectedOutput
+        is ExecutionResult.Success.OutputMismatch -> executionResult.output
+        else -> null
+      }
+      val errorOutput = when (executionResult) {
+        is ExecutionResult.Error -> executionResult.message
+        else -> null
+      }
+      SolutionTestCase(successOutput, errorOutput, solution, testCase)
     }
   }
 }

@@ -37,5 +37,5 @@ class Solution(
   @OneToMany(mappedBy = "solution")
   var solutionTestCases: List<SolutionTestCase> = emptyList(),
 
-  @Lob val content: ByteArray
+  val content: String
 ) : AbstractJpaPersistable<Long>()
