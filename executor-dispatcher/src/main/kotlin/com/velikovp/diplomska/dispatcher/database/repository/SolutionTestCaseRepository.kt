@@ -6,5 +6,4 @@ import org.springframework.data.jpa.repository.JpaRepository
 /**
  * Repository handling the CRUD operations with [SolutionTestCase]s.
  */
-interface SolutionTestCaseRepository: JpaRepository<SolutionTestCase, Long> {
-}
+interface SolutionTestCaseRepository: JpaRepository<SolutionTestCase, Long>

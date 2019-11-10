@@ -89,7 +89,7 @@ class PythonExecutionController(
       return ResponseEntity.ok(responseBody)
     } catch (e: Exception) {
       return ResponseEntity.badRequest()
-        .body(ResponseModel(ResponseCode.UNKNOWN_ERROR, e.message + e.cause?.message))
+        .body(ResponseModel(ResponseCode.UNKNOWN_ERROR, e.message))
     }
   }
 

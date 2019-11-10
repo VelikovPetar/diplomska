@@ -6,5 +6,4 @@ import org.springframework.data.jpa.repository.JpaRepository
 /**
  * Repository handling the CRUD operations with [Task]s.
  */
-interface TasksRepository: JpaRepository<Task, Long> {
-}
+interface TasksRepository: JpaRepository<Task, Long>
