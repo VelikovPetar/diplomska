@@ -2,12 +2,12 @@ package com.velikovp.diplomska.dispatcher.service
 
 import com.velikovp.diplomska.dispatcher.database.entity.Solution
 import com.velikovp.diplomska.dispatcher.database.entity.SolutionTestCase
-import com.velikovp.diplomska.dispatcher.database.entity.Task
 import com.velikovp.diplomska.dispatcher.database.repository.SolutionTestCaseRepository
 import com.velikovp.diplomska.dispatcher.database.repository.SolutionsRepository
 import com.velikovp.diplomska.dispatcher.database.repository.TasksRepository
 import com.velikovp.diplomska.dispatcher.service.utils.FileUtils
 import com.velikovp.diplomska.executor.Executor
+import com.velikovp.diplomska.executor.SolutionLanguage
 import com.velikovp.diplomska.executor.model.ExecutionResult
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -20,7 +20,8 @@ import org.springframework.web.multipart.MultipartFile
  */
 @Service
 class SolutionsService(
-  @Qualifier("pythonExecutor") private val executor: Executor,
+  @Qualifier("pythonExecutor") private val pythonExecutor: Executor,
+  @Qualifier("javaExecutor") private val javaExecutor: Executor,
   private val solutionsRepository: SolutionsRepository,
   private val tasksRepository: TasksRepository,
   private val solutionTestCaseRepository: SolutionTestCaseRepository
@@ -39,7 +40,7 @@ class SolutionsService(
    * @return the [Solution] instance if it was successfully stored.
    * @throws [StorageException] if the storing of the solution fails.
    */
-  fun storeSolution(file: MultipartFile, language: String, taskId: Long, submittedBy: Long): Solution {
+  fun storeSolution(file: MultipartFile, language: SolutionLanguage, taskId: Long, submittedBy: Long): Solution {
     val task = try {
       tasksRepository.getOne(taskId)
     } catch (e: Exception) {
@@ -49,15 +50,15 @@ class SolutionsService(
     task ?: throw StorageException("Task with id: $taskId not found.")
     val solutionContent = FileUtils.readContentsFromMultipartFile(file)
     val solution = Solution(
-      filename = file.originalFilename ?: "solution_for_task_$taskId.py",
+      filename = file.originalFilename ?: throw StorageException("Cannot resolve solution filename."),
       fileContentType = file.contentType ?: "",
-      language = language,
+      language = language.name,
       userId = submittedBy,
       task = task,
       content = solutionContent
     )
     val savedSolution = solutionsRepository.save(solution)
-    savedSolution.solutionTestCases = evaluateSolutionAgainstTestCases(savedSolution, task).map {
+    savedSolution.solutionTestCases = evaluateSolutionAgainstTestCases(savedSolution, language).map {
       solutionTestCaseRepository.save(it)
     }
     return try {
@@ -68,14 +69,21 @@ class SolutionsService(
     }
   }
 
-  private fun evaluateSolutionAgainstTestCases(solution: Solution, task: Task): List<SolutionTestCase> {
-    return task.testCases.map { testCase ->
-      val executionResult = executor.executeSingleTestCase(solution.content, testCase.input, testCase.expectedOutput)
+  private fun evaluateSolutionAgainstTestCases(solution: Solution, language: SolutionLanguage): List<SolutionTestCase> {
+    // TODO: Clean up code
+    val executor = when (language) {
+      SolutionLanguage.PYTHON -> pythonExecutor
+      SolutionLanguage.JAVA -> javaExecutor
+    }
+    val tmpDir = "solutions/${solution.userId}/${solution.task.getId()}"
+    return solution.task.testCases.map { testCase ->
+      val executionResult = executor.executeSingleTestCase(solution.filename, solution.content, tmpDir, testCase.input, testCase.expectedOutput)
       val successOutput = when (executionResult) {
         is ExecutionResult.Success.OutputCorrect -> testCase.expectedOutput
         is ExecutionResult.Success.OutputMismatch -> executionResult.output
         else -> null
       }
+      executor.cleanUp(tmpDir)
       val errorOutput = when (executionResult) {
         is ExecutionResult.Error -> executionResult.message
         else -> null

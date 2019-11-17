@@ -22,10 +22,10 @@ import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
 /**
- * Controller handling the requests for execution of python code.
+ * Controller handling the requests for execution of Java code.
  */
 @RestController
-class PythonExecutionController(
+class JavaExecutionController(
   val solutionsService: SolutionsService,
   val jwtTokenValidator: JwtTokenValidator,
   val jwtTokenParser: JwtTokenParser
@@ -39,21 +39,22 @@ class PythonExecutionController(
   @Value("\${jwt.token.secret}")
   lateinit var secretKey: String
 
-  private val logger: Logger = LoggerFactory.getLogger(PythonExecutionController::class.java)
+  private val logger: Logger = LoggerFactory.getLogger(JavaExecutionController::class.java)
 
   /**
-   * Submits a python solution file for execution.
+   * Submits a JAVA solution file for execution.
    *
    * @param headers, the request headers.
    * @param file, the solution file.
    *
    * @return [ResponseEntity] holding the result of the execution.
    */
-  @RequestMapping("executePython", method = [RequestMethod.POST])
+  @RequestMapping("executeJava", method = [RequestMethod.POST])
   fun execute(
     @RequestHeader headers: Map<String, String>,
     @RequestParam("file") file: MultipartFile
   ): ResponseEntity<out ResponseModel> {
+    // Request verification
     val jwtToken = headers[JWT_TOKEN_HEADER]
     jwtToken ?: return ResponseEntity.badRequest()
       .body(ResponseModel(ResponseCode.BAD_REQUEST, "Missing TOKEN header."))
@@ -66,7 +67,6 @@ class PythonExecutionController(
       return ResponseEntity.badRequest()
         .body(ResponseModel(ResponseCode.BAD_REQUEST, "Invalid value for TASK-ID header."))
     }
-
     val tokenVerificationResult = verifyAuthenticationToken(jwtToken)
     logger.debug("Token verification result: $tokenVerificationResult")
     if (tokenVerificationResult !is JwtValidationResult.ResultOk) {
@@ -75,8 +75,9 @@ class PythonExecutionController(
     val userId = extractUserIdFromJwtToken(jwtToken)
     userId ?: return ResponseEntity.badRequest()
       .body(ResponseModel(ResponseCode.UNKNOWN_ERROR, "An error has occurred during the operation."))
+
     try {
-      val savedSolution = solutionsService.storeSolution(file, SolutionLanguage.PYTHON, taskId, userId)
+      val savedSolution = solutionsService.storeSolution(file, SolutionLanguage.JAVA, taskId, userId)
       val responseBody = CodeExecutionResponseModel(
         taskId,
         savedSolution.solutionTestCases.map {

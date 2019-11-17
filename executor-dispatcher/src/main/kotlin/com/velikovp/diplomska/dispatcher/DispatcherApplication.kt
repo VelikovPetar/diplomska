@@ -1,7 +1,8 @@
 package com.velikovp.diplomska.dispatcher
 
 import com.velikovp.diplomska.executor.Executor
-import com.velikovp.diplomska.executor.PythonExecutor
+import com.velikovp.diplomska.executor.java.JavaExecutor
+import com.velikovp.diplomska.executor.python.PythonExecutor
 import com.velikovp.diplomska.jwt.JwtTokenParser
 import com.velikovp.diplomska.jwt.JwtTokenValidator
 import org.springframework.beans.factory.annotation.Qualifier
@@ -30,6 +31,10 @@ class DispatcherApplication {
     @Bean
     @Qualifier("pythonExecutor")
     fun pythonExecutor(): Executor = PythonExecutor()
+
+    @Bean
+    @Qualifier("javaExecutor")
+    fun javaExecutor(): Executor = JavaExecutor()
 }
 
 fun main(args: Array<String>) {

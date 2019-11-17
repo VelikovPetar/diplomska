@@ -6,8 +6,12 @@ RUN apk update \
 && apk upgrade \
 && apk add --no-cache bash \
 && apk add --no-cache --virtual=build-dependencies unzip \
-&& apk add --no-cache curl \
-&& apk add --no-cache openjdk8-jre
+&& apk add --no-cache curl
+
+RUN apk fetch openjdk8
+RUN apk add openjdk8
+ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
+ENV PATH=$JAVA_HOME/bin:${PATH}
 
 ### 3. Get Python, PIP
 
