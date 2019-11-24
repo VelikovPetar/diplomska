@@ -1,0 +1,28 @@
+Before the final deployment.yaml file can be generated, we need to properly set up the containers which will hold
+the application components.
+
+(1)
+Use local images by re-using the Docker daemon
+- Since we are using a single virtual machine (KVM), it is useful to re-use the Minikube build-it Docker daemon. Re-using
+the build=it daemon means we don't have to build a Docker registry on the host machine and push the image into it. Instead,
+we can build in the same Docker daemon as Minikube.
+-To work with the Docker daemon on your Mac/Linux host, use the docker-env command in your shell:
+
+  eval $(minikube docker-env)
+
+You can now use Docker at the command line of your host Mac/Linux machine to communicate with the Docker daemon inside the Minikube VM.
+
+(2) ========================== MAYBE USE THIS =========================================
+Build the appropriate Docker image for MySQL which will be used in the app deployment.
+    a) Get the mysql-server image:
+        docker pull mysql/mysql-server:latest
+    b) Create the MySQL container:
+        docker run --name=deployment-mysql \
+        --env MYSQL_ROOT_HOST=% \
+        --env MYSQL_ROOT_PASSWORD=<root-password> \
+        --env MYSQL_DATABASE=<db-name> \
+        --env MYSQL_USER=<db-user> \
+        --env MYSQL_PASSWORD=<db-user-password> \
+        -p 3306:3306 \
+        -d mysql/mysql-server
+(2)============================ SETUP THE ENV VARIABLES IN THE deployment.yaml==================================

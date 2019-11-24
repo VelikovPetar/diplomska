@@ -13,3 +13,18 @@ spec:
         app: diplomska
     spec:
       containers:
+        - name: database
+          image: mysql/mysql-server
+          ports:
+          - containerPort: 3306
+# TODO SETUP THE CORRECT ENVs
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "root"
+            - name: MYSQL_USER
+              value: "user"
+            - name: MYSQL_PASSWORD
+              value: "pass"
+            - name: MYSQL_DATABASE
+              value: "db_diplomska"
+
