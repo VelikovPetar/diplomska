@@ -1,20 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: diplomska-deployment
+  name: db
 spec:
   selector:
     matchLabels:
-      app: diplomska
+      run: diplomska
   replicas: 1
   template:
     metadata:
       labels:
-        app: diplomska
+        run: diplomska
     spec:
       containers:
         - name: database
           image: mysql/mysql-server
+          imagePullPolicy: Never
           ports:
           - containerPort: 3306
 # TODO SETUP THE CORRECT ENVs
@@ -27,4 +28,16 @@ spec:
               value: "pass"
             - name: MYSQL_DATABASE
               value: "db_diplomska"
-
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-service
+  labels:
+    run: diplomska
+spec:
+  ports:
+  - port: 3306
+    protocol: TCP
+  selector:
+    run: diplomska

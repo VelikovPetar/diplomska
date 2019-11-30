@@ -6,6 +6,7 @@ apply from: '../build-scripts/spring-boot-setup.gradle'
 apply from: '../build-scripts/build-jar.gradle'
 apply from: '../build-scripts/generate-app-properties.gradle'
 apply from: '../build-scripts/deploy.gradle'
+apply from: '../build-scripts/docker-scripts.gradle'
 apply plugin: 'kotlin-jpa'
 
 buildscript {

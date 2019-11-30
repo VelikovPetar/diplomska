@@ -1,0 +1,9 @@
+task buildDockerImage() {
+    dependsOn buildJar
+    doLast {
+        exec {
+            executable("docker")
+            args("build", "--tag=$imageName", "$project.projectDir")
+        }
+    }
+}

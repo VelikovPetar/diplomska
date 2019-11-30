@@ -26,3 +26,9 @@ Build the appropriate Docker image for MySQL which will be used in the app deplo
         -p 3306:3306 \
         -d mysql/mysql-server
 (2)============================ SETUP THE ENV VARIABLES IN THE deployment.yaml==================================
+USE THIS!!!!!
+
+Run the dp.yam deployment file. This will create the "db" deployment and the "sb-service" service. In order to find the
+endpoint (internal for the cluster) of the "db", use:
+    >kubectl get ep db-service
+This will give you the IP address which other deployments can use to access the "db" deployment.

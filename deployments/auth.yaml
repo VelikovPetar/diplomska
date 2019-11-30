@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth
+spec:
+  selector:
+    matchLabels:
+      app: diplomska
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: diplomska
+    spec:
+      containers:
+        - name: auth
+          image: velikovp/auth-ms
+          ports:
+            - containerPort: 8080
