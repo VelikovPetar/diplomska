@@ -30,5 +30,14 @@ USE THIS!!!!!
 
 Run the dp.yam deployment file. This will create the "db" deployment and the "sb-service" service. In order to find the
 endpoint (internal for the cluster) of the "db", use:
+
     >kubectl get ep db-service
-This will give you the IP address which other deployments can use to access the "db" deployment.
+
+This will give you the IP address which other deployments can use to access the "db" deployment. However, this is IP is
+not static, and can be changed on pod/cluster restart. In order to always make sure that the other pod will have the
+correct endpoint, in the config file we add the static domain which in the DNS resolver will always be mapped to the
+proper endpoint. To identify the domain, we need to run:
+
+    >nslookup <service-name> (from a pod (exec...))
+
+Here we can see the IP address and the domain which maps to it.
