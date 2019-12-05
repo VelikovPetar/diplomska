@@ -41,6 +41,9 @@ class PythonExecutionController(
 
   private val logger: Logger = LoggerFactory.getLogger(PythonExecutionController::class.java)
 
+  @RequestMapping("test", method = [RequestMethod.GET])
+  fun test() = "Test OK"
+
   /**
    * Submits a python solution file for execution.
    *
