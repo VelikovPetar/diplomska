@@ -10,6 +10,7 @@ task generateAppProperties() {
     ]
     def dbPasswordKey = "spring.datasource.password"
     def jwtSecretKey = "jwt.token.secret"
+    def serverPort = "server.port"
     doLast {
         // create directory if it doesn't exist
         def resDir = file(dir)
@@ -19,15 +20,20 @@ task generateAppProperties() {
         }
         // prompt the user for dynamic property values
         def dbPasswordValue = userInput("Enter the database password:")
-        def jwtSecretValue = userInput("Enter the jwtSecret:")
         if (dbPasswordValue.isEmpty()) {
             throw new RuntimeException("The database password cannot be empty.")
         }
+        def jwtSecretValue = userInput("Enter the jwtSecret:")
         if (jwtSecretValue.isEmpty()) {
             throw new RuntimeException("The JWT secret cannot be empty.")
         }
+        def serverPortValue = userInput("Enter the server port:")
+        if (serverPortValue.isEmpty()) {
+            throw new RuntimeException("The server port cannot be empty.")
+        }
         properties[dbPasswordKey] = dbPasswordValue
         properties[jwtSecretKey] = jwtSecretValue
+        properties[serverPort] = serverPortValue
         // generate the application.properties file
         println("Generating application.properties...")
         def propertiesFile = file("$dir/$fileName")

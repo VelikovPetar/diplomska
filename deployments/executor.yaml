@@ -8,7 +8,7 @@ spec:
   selector:
     matchLabels:
       run: diplomska
-  replicas: 1
+  replicas: 3
   template:
     metadata:
       labels:
@@ -23,13 +23,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: svc-executor
+  name: load-balancer-executor
   labels:
     run: diplomska
 spec:
   ports:
-    - port: 8080
-      targetPort: 8080
+    - port: 3308
+      targetPort: 3308
       protocol: TCP
   selector:
     run: diplomska
+  type: LoadBalancer
