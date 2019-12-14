@@ -19,20 +19,27 @@ spec:
       containers:
         - name: database
           image: mysql:5.6
-#          imagePullPolicy: Never
           ports:
           - containerPort: 3306
           volumeMounts:
             - name: mysql-persistent-storage
               mountPath: /var/lib/mysql
-# TODO SETUP THE CORRECT ENVs
           env:
             - name: MYSQL_ROOT_PASSWORD
-              value: "root"
+              valueFrom:
+                secretKeyRef:
+                  name: secret-db-root
+                  key: password
             - name: MYSQL_USER
-              value: "user"
+              valueFrom:
+                secretKeyRef:
+                  name: secret-db-user
+                  key: username
             - name: MYSQL_PASSWORD
-              value: "pass"
+              valueFrom:
+                secretKeyRef:
+                  name: secret-db-user
+                  key: password
             - name: MYSQL_DATABASE
               value: "db_diplomska"
       volumes:

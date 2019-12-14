@@ -41,3 +41,8 @@ proper endpoint. To identify the domain, we need to run:
     >nslookup <service-name> (from a pod (exec...))
 
 Here we can see the IP address and the domain which maps to it.
+
+(3)
+Create a kubernetes secrets for the database credentials:
+
+    >kubectl create secret generic <secret-name> --from-literal=<key1>=<value1> --from-literal=<key2>=<value2>
