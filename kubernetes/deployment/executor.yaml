@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-executor
+  labels:
+    run: diplomska
+spec:
+  selector:
+    matchLabels:
+      run: diplomska
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        run: diplomska
+    spec:
+      containers:
+        - name: executor
+          image: velikovp/executor-ms
+          ports:
+            - containerPort: 3308
+          env:
+            - name: MYSQL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: secret-db-user
+                  key: username
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret-db-user
+                  key: password
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: secret-jwt-token
+                  key: token
+          volumeMounts:
+            - name: config-volume
+              mountPath: "/config"
+      volumes:
+        - name: config-volume
+          configMap:
+            name: config-executor
+            items:
+              - key: application.properties
+                path: application.properties

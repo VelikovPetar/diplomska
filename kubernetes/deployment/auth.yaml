@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-auth
+  labels:
+    run: diplomska
+spec:
+  selector:
+    matchLabels:
+      run: diplomska
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        run: diplomska
+    spec:
+      containers:
+        - name: auth
+          image: velikovp/auth-ms
+          ports:
+            - containerPort: 3307
+          env:
+            - name: MYSQL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: secret-db-user
+                  key: username
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret-db-user
+                  key: password
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: secret-jwt-token
+                  key: token
+          volumeMounts:
+            - name: config-volume
+              mountPath: "/config"
+      volumes:
+        - name: config-volume
+          configMap:
+            name: config-auth
+            items:
+              - key: application.properties
+                path: application.properties
