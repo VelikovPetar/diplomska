@@ -54,4 +54,4 @@ static def userInput(String promptLine) {
     return reader.readLine()
 }
 
-build.dependsOn generateAppProperties
+//build.dependsOn generateAppProperties
