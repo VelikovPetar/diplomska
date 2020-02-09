@@ -8,7 +8,7 @@ spec:
   selector:
     matchLabels:
       run: diplomska
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
@@ -17,6 +17,11 @@ spec:
       containers:
         - name: auth
           image: velikovp/auth-ms
+          resources:
+            requests:
+              cpu: 200m
+            limits:
+              cpu: 500m
           ports:
             - containerPort: 3307
           env:

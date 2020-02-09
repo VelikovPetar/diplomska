@@ -10,7 +10,7 @@ import java.util.Date
 class JwtTokenCreator {
 
   companion object {
-    private val validityInMilliseconds = 3 * 60 * 60 * 1000
+    private const val validityInMilliseconds = 3 * 60 * 60 * 1000
   }
 
   /**
