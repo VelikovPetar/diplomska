@@ -65,7 +65,13 @@ fun loginAndExtractToken(login: Login): Pair<ResponseModel, String?> {
   return Pair(responseModel, null)
 }
 
-fun execute(url: String, taskId: Long, authToken: String, filename: String, solutionFile: File): Pair<CodeExecutionResponseModel?, ResponseModel?> {
+fun execute(
+  url: String,
+  taskId: Long,
+  authToken: String,
+  filename: String,
+  solutionFile: File
+): Pair<CodeExecutionResponseModel?, ResponseModel?> {
   val requestBody = MultipartBody.Builder()
     .addFormDataPart("file", filename, solutionFile.asRequestBody("multipart/form-data".toMediaType()))
     .build()
@@ -80,7 +86,8 @@ fun execute(url: String, taskId: Long, authToken: String, filename: String, solu
   } catch (e: Exception) {
     return Pair(null, ResponseModel(ResponseCode.UNKNOWN_ERROR, "Failed to execute call on url: $url."))
   }
-  val codeExecutionResponseModel = OBJECT_MAPPER.readValue(response.body!!.string(), CodeExecutionResponseModel::class.java)
+  val codeExecutionResponseModel =
+    OBJECT_MAPPER.readValue(response.body!!.string(), CodeExecutionResponseModel::class.java)
   return Pair(codeExecutionResponseModel, null)
 }
 
@@ -97,7 +104,7 @@ fun createLogins(numberOfLogins: Int): List<Login> = createRegistrations(numberO
 }
 
 
-fun main(args: Array<String>) {
+//fun main(args: Array<String>) {
 //  println("Hello misiri")
 //  createRegistrations(2000).forEach {
 //    GlobalScope.launch {
@@ -105,16 +112,16 @@ fun main(args: Array<String>) {
 //      println("Registration of user $it complete with result: ${response.responseCode}/${response.errorMessage}")
 //    }
 //  }
-  createLogins(2000).forEach {
-    GlobalScope.launch {
-      val pair = loginAndExtractToken(it)
-      if (pair.second == null) {
-        println("Failed to login user $it with result: ${pair.first.responseCode}/${pair.first.errorMessage}")
-      } else {
-        println("Login success for user $it with token: ${pair.second}")
-      }
-    }
-  }
+//  createLogins(2000).forEach {
+//    GlobalScope.launch {
+//      val pair = loginAndExtractToken(it)
+//      if (pair.second == null) {
+//        println("Failed to login user $it with result: ${pair.first.responseCode}/${pair.first.errorMessage}")
+//      } else {
+//        println("Login success for user $it with token: ${pair.second}")
+//      }
+//    }
+//  }
 //  createLogins(200).forEach {
 //    GlobalScope.launch {
 //      val loginResponse = loginAndExtractToken(it)
@@ -127,5 +134,37 @@ fun main(args: Array<String>) {
 //      }
 //    }
 //  }
-  Thread.sleep(2 * 60 * 1_000)
+//  Thread.sleep(2 * 60 * 1_000)
+//}
+
+open class App {
+  companion object {
+    @JvmStatic
+    fun main(args: Array<String>) {
+//      createRegistrations(2000).forEach {
+//        GlobalScope.launch {
+//          val response = register(it)
+//          println("Registration of user $it complete with result: ${response.responseCode}/${response.errorMessage}")
+//        }
+//      }
+
+      val n = 60
+      for (i in 0..n) {
+        println("Executing batch $i/$n: Executing 10 000 login requests...")
+        createLogins(10000).forEach {
+          println(it)
+          GlobalScope.launch {
+            val pair = loginAndExtractToken(it)
+//            if (pair.second == null) {
+//              println("Failed to login user $it with result: ${pair.first.responseCode}/${pair.first.errorMessage}")
+//            } else {
+//              println("Login success for user $it with token: ${pair.second}")
+//            }
+          }
+        }
+        Thread.sleep(1000)
+      }
+      Thread.sleep(5_000)
+    }
+  }
 }

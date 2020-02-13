@@ -21,9 +21,9 @@ spec:
           image: mysql:5.6
           resources:
             requests:
-              cpu: 200m
+              cpu: 400m
             limits:
-              cpu: 500m
+              cpu: 800m
           ports:
           - containerPort: 3306
           volumeMounts:

@@ -6,6 +6,7 @@ Preconditions:
 
 1. Start a local Minikube cluster running in a KVM virtual machine:
     - minikube start --vm-driver=kvm2
+    - minikube start --vm-driver=kvm2 --memory=5144 --cpus=4 --extra-config=kubelet.authentication-token-webhook=true
 
 2. Create the 'deployment.yaml' file describing the application (deployment).
 3. Run the command to create a deployment from the .yaml file.
