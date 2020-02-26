@@ -57,7 +57,14 @@ fun loginAndExtractToken(login: Login): Pair<ResponseModel, String?> {
       null
     )
   }
-  val responseModel = OBJECT_MAPPER.readValue(response.body!!.string(), ResponseModel::class.java)
+  val responseModel = try {
+    OBJECT_MAPPER.readValue(response.body!!.string(), ResponseModel::class.java)
+  } catch (e: Exception) {
+    return Pair(
+      ResponseModel(ResponseCode.UNKNOWN_ERROR, "Failed to execute request for $login on url: $LOGIN_URL"),
+      null
+    )
+  }
   if (responseModel.responseCode == ResponseCode.OK) {
     val authToken = response.header("TOKEN", null)
     return Pair(responseModel, authToken)
@@ -126,6 +133,7 @@ open class App {
 
     private fun performLogins(n: Int, duration: Int) {
       for (i in 0..duration) {
+        println("[Batch $i] Executing $n login requests.")
         createLogins(n).forEach { login ->
           GlobalScope.launch {
             val loginResult = loginAndExtractToken(login)
@@ -225,7 +233,7 @@ open class App {
       when (args[0]) {
         Action.REGISTRATION.value -> handleRegistration(args)
         Action.AUTHENTICATION.value -> handleAuthentication(args)
-        Action.EVALUATION.value -> println("Executing authentication+evaluation...")
+        Action.EVALUATION.value -> handleEvaluation(args)
         else -> {
           println("Invalid action provided. Please provide one of the following: [${Action.values().joinToString(separator = ", ") { it.value }}]")
         }
